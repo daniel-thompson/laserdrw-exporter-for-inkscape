@@ -34,11 +34,14 @@
     
     <param name="margin" type="float" precision="1" min="0" max="9999" 
     gui-text="Laser Draw Margin Size">2.0</param>
-      
+    
+    <param name="txt2paths" type="boolean" gui-text="Convert Text to Paths">false</param>
+    
     <param name="inkscape_dpi" type="enum" gui-text="Inkscape Version:">
     <item value="96.0">0.92 or Newer</item>
     <item value="90.0">0.91 or Older</item>
     </param>
+    
     
     <output>
                 <extension>.lyz</extension>

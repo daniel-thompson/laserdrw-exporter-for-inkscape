@@ -37,6 +37,8 @@
     <param name="margin" type="float" precision="1" min="0" max="9999" 
     gui-text="Laser Draw Margin Size">2.0</param>
     
+    <param name="txt2paths" type="boolean" gui-text="Convert Text to Paths">false</param>
+    
     <!--
     <_param name="texthelp" type="description">
     Depending on your Inkscape version the internal resolution need to be 72, 90 or 96 to get the properly scaled output.</_param>
