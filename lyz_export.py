@@ -6,6 +6,7 @@ File history:
 0.1 Initial code (2/5/2017)
 0.2 - Added support for rectangle, circle and ellipse (2/7/2017)
     - Added option to automatically convert text to paths
+0.3 - Fixed x,y translation when view box is used in SVG file for scaling (2/10/2017) 
 
 Copyright (C) 2017 Scorch www.scorchworks.com
 Derived from dxf_outlines.py by Aaron Spike and Alvin Penner
@@ -476,16 +477,16 @@ class MyEffect(inkex.Effect):
         try:
             view_box_str = self.document.getroot().xpath('@viewBox', namespaces=inkex.NSS)[0]
             view_box_list = view_box_str.split(' ')
-            Wpix = float(view_box_list[2]) - float(view_box_list[0])
-            Hpix = float(view_box_list[3]) - float(view_box_list[1])
+            Wpix = float(view_box_list[2])
+            Hpix = float(view_box_list[3])
             scale = h_mm/Hpix
-            
-            # msg = msg + "Hpix   = %f\n" %(Hpix)
-            # msg = msg + "Wpix   = %f\n" %(Wpix)
-            # msg = msg + "Hdpi   = %f\n" %(h_mm/Hpix)
-            # msg = msg + "Wdpi   = %f\n" %(w_mm/Wpix)
+            Dx = float(view_box_list[0]) / ( float(view_box_list[2])/w_mm )
+            Dy = float(view_box_list[1]) / ( float(view_box_list[3])/h_mm )
         except:
+            #inkex.errormsg(_("Using Default Inkscape Scale"))
             scale = 25.4/self.inkscape_dpi
+            Dx = 0
+            Dy = 0
         
         for node in self.document.getroot().xpath('//svg:g', namespaces=inkex.NSS):
             if node.get(inkex.addNS('groupmode', 'inkscape')) == 'layer':
@@ -497,8 +498,9 @@ class MyEffect(inkex.Effect):
                 if layer and not layer in self.layers:
                     self.layers.append(layer)
 
-        #self.groupmat = [[[scale, 0.0, 0.0], [0.0, -scale, h*scale]]]
-        self.groupmat = [[[scale, 0.0, 0.0], [0.0, -scale, h_mm]]]
+        #self.groupmat = [[[scale, 0.0, 0.0], [0.0, -scale, h_mm]]]
+        self.groupmat = [[[scale,    0.0,  0.0-Dx],
+                          [0.0  , -scale, h_mm+Dy]]]
         #doc = self.document.getroot()
         self.process_group(self.document.getroot())
         #################################################
